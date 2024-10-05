@@ -7,8 +7,20 @@ Para preparar o ambiente e iniciar a execução da API, primeiro é preciso cria
 PS> python -m venv .\venv\
 ```
 
+Ativar o ambiente no terminal
+
+```powershell
+PS> .\venv\Scripts\activate
+```
+
 E então instalar as dependências presentes no arquivo `requirements.txt`
 
 ```powershell
 PS> pip install -r .\requirements.txt
+```
+
+Com o ambiente preparado, é possível iniciar a execução da API com o comando:
+
+```powershell
+PS> flask run
 ```
