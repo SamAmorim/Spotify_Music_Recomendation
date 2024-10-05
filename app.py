@@ -1,23 +1,22 @@
 # Importando a biblioteca Flask
 from flask import Flask
-# Biblioteca para fazer requisições HTTP
-import requests
-# Biblioteca para manipulação de JSON
-import json
+from dotenv import load_dotenv
+from routes import auth
+from services.spotify import get_artist_info
 import os
+
+load_dotenv()
 
 def create_app():
     app = Flask(__name__)
 
-    print(os.environ.get('SECRET_KEY'))
+    app.secret_key = os.environ.get('FLASK_SECRET_KEY')
+
+    app.register_blueprint(auth.auth_bp)
 
     @app.route('/')
     def home():
-        response = requests.get('https://api.artic.edu/api/v1/artworks/search?q=cats')
-        data = response.json()
-
-        # O método json.dumps() converte um objeto Python em uma string JSON formatada
-        parsed = json.dumps(data, indent=4)
-        return parsed
+        artist_info = get_artist_info()
+        return artist_info
     
     return app
