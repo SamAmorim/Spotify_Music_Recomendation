@@ -1,12 +1,14 @@
-from services.auth import get_app_access_token
+from flask import session
 from constants.spotify import SPOTIFY_BASE_URL
 import requests
 
-def get_artist_info():
-    access_token = get_app_access_token()
-    artist_id = '4dqkXUB9csjA7u4feEpeMF'
+def get_user_saved_tracks():
+    url = f'{SPOTIFY_BASE_URL}/me/tracks'
 
-    artist_response = requests.get(f'{SPOTIFY_BASE_URL}/artists/{artist_id}', headers={ 'Authorization': f'Bearer {access_token}' })
-    artist_response_data = artist_response.json()
+    headers = {
+        'Authorization': f'Bearer {session["access_token"]}'
+    }
 
-    return artist_response_data
+    response = requests.get(url, headers=headers)
+
+    return map(lambda track: f'{track['track']['name']} - {track['track']['artists'][0]['name']} <br>', response.json()['items'])

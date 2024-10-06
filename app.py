@@ -1,11 +1,12 @@
 # Importando a biblioteca Flask
-from flask import Flask
+from flask import Flask, session
 from dotenv import load_dotenv
 from routes import auth
-from services.spotify import get_artist_info
+from services.auth import get_user_authorize_url
+from services.spotify import get_user_saved_tracks
 import os
 
-load_dotenv()
+load_dotenv(verbose=True, override=True)
 
 def create_app():
     app = Flask(__name__)
@@ -16,7 +17,10 @@ def create_app():
 
     @app.route('/')
     def home():
-        artist_info = get_artist_info()
-        return artist_info
+        if 'access_token' not in session:
+            return f'Você não está autenticado. <a href="{get_user_authorize_url()}">Faça login com o Spotify</a>'
+
+        tracks = get_user_saved_tracks()
+        return tracks
     
     return app

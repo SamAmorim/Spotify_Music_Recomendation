@@ -1,41 +1,53 @@
 import requests
+import base64
 import time
 import os
 from flask import session
 from constants.spotify import SPOTIFY_AUTH_URL
 
-def get_app_access_token():
-    access_token = session.get('access_token')
-    expires_in = session.get('expires_in')
-    last_request_time = session.get('last_request_time')
-
-    if access_token is None or time.time() - last_request_time > expires_in:
-        auth_response = requests.post(f"{SPOTIFY_AUTH_URL}/api/token", data={
-            'grant_type': 'client_credentials',
-            'client_id': os.environ.get('SPOTIFY_API_CLIENT_ID'),
-            'client_secret': os.environ.get('SPOTIFY_API_CLIENT_SECRET')
-        })
-
-        auth_response_data = auth_response.json()
-
-        session['access_token'] = auth_response_data['access_token']
-        session['expires_in'] = auth_response_data['expires_in']
-        session['last_request_time'] = time.time()
-
-    return session['access_token']
-
 def get_user_authorize_url():
     url = f"{SPOTIFY_AUTH_URL}/authorize"
+
+    random_state = int(time.time())
+    session['state'] = f'{random_state}'
+
     query_params = {
         'response_type': 'code',
-        'redirect_uri': os.environ.get('SPOTIFY_REDIRECT_URI'),
+        'redirect_uri': os.environ.get('SPOTIFY_API_REDIRECT_URI'),
         'client_id': os.environ.get('SPOTIFY_API_CLIENT_ID'),
-        'scope': 'user-libary-read'
+        'scope': 'user-library-read',
+        'state': random_state
     }
 
     response = requests.get(url, params=query_params)
 
-    print(response)
-    print(response.url)
-
     return response.url
+
+def get_user_callback_token(code):
+    url = f"{SPOTIFY_AUTH_URL}/api/token"
+
+    query_params = {
+        'grant_type': 'authorization_code',
+        'code': code,
+        'redirect_uri': os.environ.get('SPOTIFY_API_REDIRECT_URI')
+    }
+
+    client_id = os.environ.get('SPOTIFY_API_CLIENT_ID')
+    client_secret = os.environ.get('SPOTIFY_API_CLIENT_SECRET')
+
+    secrets = f"{client_id}:{client_secret}".encode('ascii')
+    authorization = base64.b64encode(secrets).decode('ascii')
+
+    headers = {
+        'Authorization': f'Basic {authorization}',
+        'Content-Type': 'application/x-www-form-urlencoded'
+    }
+
+    response = requests.post(url, data=query_params, headers=headers)
+
+    if response.status_code != 200:
+        return False
+    
+    session['access_token'] = response.json()['access_token']
+
+    return True
