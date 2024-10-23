@@ -10,5 +10,6 @@ def get_user_saved_tracks():
     }
 
     response = requests.get(url, headers=headers)
+    return response.json()
 
-    return map(lambda track: f'{track['track']['name']} - {track['track']['artists'][0]['name']} <br>', response.json()['items'])
+    #return map(lambda track: f'{track['track']['name']} - {track['track']['artists'][0]['name']} <br>', response.json()['items'])
