@@ -1,5 +1,5 @@
 # Importando a biblioteca Flask
-from flask import Flask, session
+from flask import Flask, session, render_template
 from dotenv import load_dotenv
 from routes import auth
 from services.auth import get_user_authorize_url
@@ -17,10 +17,12 @@ def create_app():
 
     @app.route('/')
     def home():
-        if 'access_token' not in session:
-            return f'Você não está autenticado. <a href="{get_user_authorize_url()}">Faça login com o Spotify</a>'
+        return render_template('home.html')
 
-        tracks = get_user_saved_tracks()
-        return tracks
+        #if 'access_token' not in session:
+            #return f'Você não está autenticado. <a href="{get_user_authorize_url()}">Faça login com o Spotify</a>'
+
+        #tracks = get_user_saved_tracks()
+        # return tracks
     
     return app

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block page_title %}
+Home
+{% endblock page_title %}
+
+{% block main %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="text-center">Spotify Music Recommendation</h1>
+    </div>
+</div>
+<div class="row mb-4 justify-content-center">
+    <div class="col-6">
+        <p class="fs-4 text-center">O <strong>Spotify Music Recommendation</strong> é o sistema desenvolvido para realizar análises <strong>preditivas</strong> e <strong>descritivas</strong> sobre como as pessoas ouvem as suas músicas no Spotify.</p>
+    </div>
+</div>
+<div class="row justify-content-center">
+    <div class="col-6">
+        <p class="fs-5 text-center">Escoha o tipo de análise para prosseguir:</p>
+    </div>
+</div>
+<div class="row align-self-center justify-content-center">
+    <div class="col-8">
+        <div class="row">
+            <div class="col d-flex justify-content-center gap-2">
+                <a href="/" class="btn btn-lg btn-primary">Algoritmo de Predição de Músicas</a>
+                <a href="/" class="btn btn-lg btn-outline-primary">Análise das Músicas Ouvidas</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
