@@ -3,11 +3,6 @@ from services.auth import get_user_authorize_url, get_user_callback_token
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
-@auth_bp.route('/login')
-def login():
-    authorize_url = get_user_authorize_url()
-    return f'<a href="{authorize_url}">Faça login com o Spotify</a>'
-
 @auth_bp.route('/callback')
 def callback():
     code = request.args.get('code')

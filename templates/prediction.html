@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block page_title %}
+Home
+{% endblock page_title %}
+
+{% block main %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="fs-4 text-center">Algoritmo de Predição de Músicas</h1>
+    </div>
+</div>
+{% if recently_played %}
+<div class="row mb-4 justify-content-center">
+    <div class="col-6">
+        <p class="fs-4 text-center">
+            Suas músicas ouvidas recentemente:
+        </p>
+    </div>
+</div>
+<div class="row justify-content-center">
+    <div class="col-6">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col"></th>
+                    <th scope="col">Nome</th>
+                    <th scope="col">Artista</th>
+                    <th scope="col">Álbum</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for track in recently_played['items'] %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td><img src="{{ track['track']['album']['images'][2]['url'] }}" alt="{{ track['track']['name'] }}" width="32" height="32"></td>
+                    <td class="fw-bold">{{ track['track']['name'] }}</td>
+                    <td>{{ track['track']['artists'][0]['name'] }}</td>
+                    <td>{{ track['track']['album']['name'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+<div class="row align-self-center justify-content-center">
+    <div class="col-8">
+        <div class="row">
+            <div class="col d-flex justify-content-center gap-2">
+                <a href="/" class="btn btn-lg btn-success">Algoritmo de Predição de Músicas</a>
+                <a href="/" class="btn btn-lg btn-outline-success">Análise das Músicas Ouvidas</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

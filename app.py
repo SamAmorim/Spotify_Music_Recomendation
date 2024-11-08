@@ -1,9 +1,8 @@
 # Importando a biblioteca Flask
 from flask import Flask, session, render_template
 from dotenv import load_dotenv
-from routes import auth
+from routes import auth, prediction
 from services.auth import get_user_authorize_url
-from services.spotify import get_user_saved_tracks
 import os
 
 load_dotenv(verbose=True, override=True)
@@ -14,6 +13,7 @@ def create_app():
     app.secret_key = os.environ.get('FLASK_SECRET_KEY')
 
     app.register_blueprint(auth.auth_bp)
+    app.register_blueprint(prediction.prediction_bp)
 
     @app.route('/')
     def home():
@@ -25,4 +25,11 @@ def create_app():
         #tracks = get_user_saved_tracks()
         # return tracks
     
+    @app.before_request
+    def before_request():
+        if 'login_url' not in session:
+            session['login_url'] = get_user_authorize_url()
+            
+        return None
+
     return app

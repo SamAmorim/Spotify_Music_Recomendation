@@ -13,16 +13,26 @@
         {% block page_styles %}{% endblock page_styles %}
     {% endset %}
     {{ page_styles }}
-    <title>{{ page_title }}</title>
+    <title>
+        {{ page_title }}
+    </title>
 </head>
 <body>
     <div class="container-fluid p-4">
-        <div class="row mb-5 justify-content-center">
+        <div class="row mb-4 justify-content-center">
             <div class="col-6 d-flex justify-content-center">
-                <!-- <h4 class="text-center">Olá, Nicholas</h1> -->
-                <button class="btn btn-primary">
-                    Faça login no Spotify
-                </button>
+                {% if session['user'] %}
+                <div class="d-flex align-items-center gap-3">
+                    <img src="{{ session['user']['images'][0]['url'] }}" alt="{{ session['user']['display_name'] }}" class="rounded-circle" width="32" height="32">
+                    <h5 class="text-center">
+                        Olá, {{ session['user']['display_name'] }}.
+                    </h1>
+                </div>
+                {% else %}
+                    <a href="{{ session['login_url'] }}" class=" btn btn-lg btn-success" role="button">
+                        Fazer login no Spotify
+                    </a>
+                {% endif %}
             </div>
         </div>
         {% block main scoped %}

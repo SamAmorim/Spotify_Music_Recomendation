@@ -3,7 +3,7 @@ import base64
 import time
 import os
 from flask import session
-from constants.spotify import SPOTIFY_AUTH_URL
+from constants.spotify import SPOTIFY_AUTH_URL, SPOTIFY_BASE_URL
 
 def get_user_authorize_url():
     url = f"{SPOTIFY_AUTH_URL}/authorize"
@@ -15,7 +15,7 @@ def get_user_authorize_url():
         'response_type': 'code',
         'redirect_uri': os.environ.get('SPOTIFY_API_REDIRECT_URI'),
         'client_id': os.environ.get('SPOTIFY_API_CLIENT_ID'),
-        'scope': 'user-library-read',
+        'scope': 'user-read-recently-played',
         'state': random_state
     }
 
@@ -49,5 +49,17 @@ def get_user_callback_token(code):
         return False
     
     session['access_token'] = response.json()['access_token']
+    session['user'] = get_user_profile()
 
     return True
+
+def get_user_profile():
+    url = f"{SPOTIFY_BASE_URL}/me"
+
+    headers = {
+        'Authorization': f'Bearer {session["access_token"]}'
+    }
+
+    response = requests.get(url, headers=headers)
+
+    return response.json()
