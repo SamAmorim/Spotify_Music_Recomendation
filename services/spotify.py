@@ -24,9 +24,6 @@ def get_recently_played():
 
     # Obter as músicas recentemente tocadas
     response = requests.get(url, headers=headers)
-
-    print(response)
-
     results = response.json()
 
     # Concatenar as informações das músicas e features de áudio

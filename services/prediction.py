@@ -5,8 +5,8 @@ def transform_recently_played_to_df(recently_played):
     tracks_info = []
 
     for item in recently_played['items']:
-        track_data = sp.track(item['track']['id'])
-        audio_features = sp.audio_features(item['track']['id'])[0]
+        track_data = item['track']['track_data']
+        audio_features = item['track']['audio_features']
 
         # Verificar se track_data e audio_features são válidos
         if track_data and audio_features:

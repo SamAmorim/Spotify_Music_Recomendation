@@ -1,5 +1,5 @@
 from flask import Blueprint, request, session, redirect, url_for
-from services.auth import get_user_authorize_url, get_user_callback_token
+from services.auth import get_user_callback_token
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
