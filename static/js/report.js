@@ -1,62 +1,73 @@
 const reportTypeForm = document.getElementById('report-type-form');
-const tableContainer = document.getElementById('table-container');
+const recentlyPlayedContainer = document.getElementById('recently-played-container');
+const aiRecommendationContainer = document.getElementById('ai-recommendation-container');
+const trackComponent = document.getElementById('track-component');
 
-const recentlyPlayedTable = document.createElement('table');
-recentlyPlayedTable.className = 'table table-striped table-hover';
+if (localStorage.getItem('recentlyPlayed')) {
+    const recentlyPlayed = JSON.parse(localStorage.getItem('recentlyPlayed'));
+    recentlyPlayed.forEach(item => {
+        const newTrackComponent = trackComponent.cloneNode(true);
+        newTrackComponent.style.display = 'block';
+        newTrackComponent.querySelector('#track-image').src = item.track.album.images[2].url;
+        newTrackComponent.querySelector('#track-image').alt = item.track.name;
+        newTrackComponent.querySelector('#track-name').textContent = item.track.name;
+        newTrackComponent.querySelector('#track-artist').textContent = item.track.artists[0].name;
+        recentlyPlayedContainer.appendChild(newTrackComponent);
+    });
+} else {
+    fetch('/spotify/recently-played')
+        .then(response => response.json())
+        .then(data => {
+            localStorage.setItem('recentlyPlayed', JSON.stringify(data.items));
 
-const aiRecommendationTable = document.createElement('table');
-aiRecommendationTable.className = 'table table-striped table-hover';
+            data.items.forEach(item => {
+                const newTrackComponent = trackComponent.cloneNode(true);
+                newTrackComponent.style.display = 'block';
+                newTrackComponent.querySelector('#track-image').src = item.track.album.images[2].url;
+                newTrackComponent.querySelector('#track-image').alt = item.track.name;
+                newTrackComponent.querySelector('#track-name').textContent = item.track.name;
+                newTrackComponent.querySelector('#track-artist').textContent = item.track.artists[0].name;
+                recentlyPlayedContainer.appendChild(newTrackComponent);
+            });
+        });
+}
 
-const recentlyPlayedThead = document.createElement('thead');
-recentlyPlayedThead.innerHTML = '<tr><th></th><th>Música</th><th>Artista</th></tr>';
-recentlyPlayedTable.appendChild(recentlyPlayedThead);
-
-const aiRecommendationThead = document.createElement('thead');
-aiRecommendationThead.innerHTML = '<tr><th></th><th>Música</th><th>Artista</th></tr>';
-aiRecommendationTable.appendChild(aiRecommendationThead);
-
-const recentlyPlayedTbody = document.createElement('tbody');
-recentlyPlayedTable.appendChild(recentlyPlayedTbody);
-
-const aiRecommendationTbody = document.createElement('tbody');
-aiRecommendationTable.appendChild(aiRecommendationTbody);
-
-tableContainer.appendChild(recentlyPlayedTable);
-tableContainer.appendChild(aiRecommendationTable);
-
-fetch('/spotify/recently-played')
+if (localStorage.getItem('aiRecommendation')) {
+    const aiRecommendation = JSON.parse(localStorage.getItem('aiRecommendation'));
+    aiRecommendation.forEach(item => {
+        const newTrackComponent = trackComponent.cloneNode(true);
+        newTrackComponent.style.display = 'block';
+        newTrackComponent.querySelector('#prediction-precision').textContent = item.similarity.toFixed(4);
+        newTrackComponent.querySelector('#track-image').src = item['track_data'].album.images[2].url;
+        newTrackComponent.querySelector('#track-image').alt = item['track_data'].name;
+        newTrackComponent.querySelector('#track-name').textContent = item['track_data'].name;
+        newTrackComponent.querySelector('#track-artist').textContent = item['track_data'].artists[0].name;
+        aiRecommendationContainer.appendChild(newTrackComponent);
+    });
+} else {
+fetch('/prediction')
     .then(response => response.json())
     .then(data => {
-        data.items.forEach(item => {
-            const tr = document.createElement('tr');
-
-            const imgCell = document.createElement('td');
-            const img = document.createElement('img');
-            img.src = item.track.album.images[2].url;
-            img.alt = item.track.name;
-            img.style.width = '50px';
-            img.style.height = '50px';
-            imgCell.appendChild(img);
-            tr.appendChild(imgCell);
-
-            const trackCell = document.createElement('td');
-            trackCell.textContent = item.track.name;
-            tr.appendChild(trackCell);
-
-            const artistCell = document.createElement('td');
-            artistCell.textContent = item.track.artists[0].name;
-            tr.appendChild(artistCell);
-
-            recentlyPlayedTbody.appendChild(tr);
+        localStorage.setItem('aiRecommendation', JSON.stringify(data));
+        data.forEach(item => {
+            const newTrackComponent = trackComponent.cloneNode(true);
+            newTrackComponent.style.display = 'block';
+            newTrackComponent.querySelector('#prediction-precision').textContent = item.similarity.toFixed(4);
+            newTrackComponent.querySelector('#track-image').src = item['track_data'].album.images[2].url;
+            newTrackComponent.querySelector('#track-image').alt = item['track_data'].name;
+            newTrackComponent.querySelector('#track-name').textContent = item['track_data'].name;
+            newTrackComponent.querySelector('#track-artist').textContent = item['track_data'].artists[0].name;
+            aiRecommendationContainer.appendChild(newTrackComponent);
         });
     });
+}
 
 reportTypeForm.addEventListener('change', e => {
     if (e.target.id === 'recently-played') {
-        recentlyPlayedTable.style.display = 'table';
-        aiRecommendationTable.style.display = 'none';
+        recentlyPlayedContainer.style.display = 'flex';
+        aiRecommendationContainer.style.display = 'none';
     } else {
-        recentlyPlayedTable.style.display = 'none';
-        aiRecommendationTable.style.display = 'table';
+        recentlyPlayedContainer.style.display = 'none';
+        aiRecommendationContainer.style.display = 'flex';
     }
 });

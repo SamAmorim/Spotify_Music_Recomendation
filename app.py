@@ -1,7 +1,7 @@
 # Importando a biblioteca Flask
 from flask import Flask, session, render_template
 from dotenv import load_dotenv
-from routes import auth, report, spotify
+from routes import auth, report, spotify, prediction
 from services.auth import get_user_authorize_url
 import os
 
@@ -15,7 +15,8 @@ def create_app():
     app.register_blueprint(auth.auth_bp)
     app.register_blueprint(report.report_bp)
     app.register_blueprint(spotify.spotify_bp)
-    
+    app.register_blueprint(prediction.prediction_bp)
+
     @app.route('/')
     def home():
         return render_template('home.html')
