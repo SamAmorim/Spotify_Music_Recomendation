@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block page_title %}
+Home
+{% endblock page_title %}
+
+{% block main %}
+<div class="container-fluid h-100">
+    <div class="row h-100">
+        <div class="col-4 h-100">
+            <div class="container-fluid d-flex flex-column gap-3 h-100 g-0">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="d-flex align-items-center gap-3">
+                            <img src="{{ session['user']['images'][0]['url'] }}" alt="{{ session['user']['display_name'] }}" class="rounded-circle" width="32" height="32">
+                            <h5 class="text-center">
+                                Olá, {{ session['user']['display_name'] }}.
+                            </h1>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <form class="col-12 d-flex justify-content-between gap-2" id="report-type-form">
+                        <input type="radio" class="btn-check" name="report-type" id="recently-played" autocomplete="off" checked>
+                        <label class="btn btn-outline-success" for="recently-played">Ouvidas recentemente</label>
+                        <input type="radio" class="btn-check" name="report-type" id="ai-recommendation" autocomplete="off">
+                        <label class="btn btn-outline-success" for="ai-recommendation">Recomendação da IA</label>
+                    </form>
+                </div>
+                <div class="row h-100 overflow-y-auto">
+                    <div class="col-12 flex-column gap-2" style="display: flex;" id="recently-played-container">
+                    </div>
+                    <div class="col-12 flex-column gap-2" style="display: none;" id="ai-recommendation-container">
+                    </div>
+
+                    <!-- Track component -->
+                    <div class="card" id="track-component" style="display: none;">
+                        <div class="row g-0">
+                            <div class="col-3">
+                                <img src="" alt="" class="ratio ratio-1x1" id="track-image">
+                            </div>
+                            <div class="col-9">
+                                <div class="card-body">
+                                    <p class="card-title mb-0 fw-bolder w-100 overflow-hidden" style="white-space: nowrap;" id="track-name"></p>
+                                    <p class="card-text mb-0" id="track-artist"></p>
+                                    <span class="card-text" style="font-size: 0.65rem;" id="prediction-precision"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="container-fluid d-flex flex-column gap-3 h-100 g-0">
+                <div class="row">
+                    <div class="col-12">
+                        <h5 class="text-center">
+                            Perfil músical
+                        </h1>
+                        <p>
+                            Musical profile
+                        </p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="container-fluid h-100">
+                            <div class="row h-100">
+                                <div class="col-6">
+                                    <div class="container-fluid h-100">
+                                        <div class="row h-100">
+                                            <div class="col-12">
+                                                <h6 class="text-center">
+                                                    Artistas
+                                                </h6>
+                                            </div>
+                                            <div class="col-12 h-100">
+                                                <canvas id="chart">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="container-fluid h-100">
+                                        <div class="row h-100">
+                                            <div class="col-12">
+                                                <h6 class="text-center">
+                                                    Gêneros
+                                                </h6>
+                                            </div>
+                                            <div class="col-12">
+                                                <canvas id="genres-chart">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block page_scripts %}
+<script src="{{ url_for('static', filename='js/report.js') }}"></script>
+<script src="{{ url_for('static', filename='js/chart.umd.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+{% endblock page_scripts %}

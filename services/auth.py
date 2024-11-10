@@ -62,4 +62,6 @@ def get_user_profile():
 
     response = requests.get(url, headers=headers)
 
+    print(response.content)
+
     return response.json()
