@@ -178,41 +178,16 @@ Chart.register(ChartDataLabels);
     new Chart(
         genresChart,
         {
-            type: 'pie',
+            type: 'radar',
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                layout: {
-                    padding: {
-                        left: 70,
-                        right: 70,
-                        top: 0,
-                        bottom: 0
-                    }
-                },
                 plugins: {
                     legend: {
                         display: false
                     },
                     title: {
                         display: false
-                    },
-                    datalabels: {
-                        // Put labels outside the chart
-                        color: '#fff',
-                        formatter: (value, context) => {
-                            const datapoints = context.chart.data.datasets[0].data;
-                            const total = datapoints.reduce((total, datapoint) => total + datapoint, 0);
-                            const percentage = value / total * 100;
-                            return context.chart.data.labels[context.dataIndex] + "\n" + percentage.toFixed(1) + "%";
-                        },
-                        font: {
-                            size: 12
-                        },
-                        textAlign: 'center',
-                        align: 'end',
-                        anchor: 'end',
-                        offset: 10
                     }
                 }
             },
