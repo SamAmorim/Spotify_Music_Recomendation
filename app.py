@@ -1,8 +1,11 @@
-from flask import Flask, session, render_template
-from dotenv import load_dotenv
-from routes import auth, report, spotify, prediction
-from services.auth import get_user_authorize_url
 import os
+import time
+
+from dotenv import load_dotenv
+from flask import Flask, redirect, render_template, session, request
+
+from routes import auth, prediction, report, spotify
+from services.auth import get_user_authorize_url
 
 load_dotenv(verbose=True, override=True)
 

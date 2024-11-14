@@ -1,6 +1,9 @@
-from flask import session
-from constants.spotify import SPOTIFY_BASE_URL
+import time
+
 import requests
+from flask import session
+
+from constants.spotify import SPOTIFY_BASE_URL
 
 def get_user_saved_tracks():
     url = f'{SPOTIFY_BASE_URL}/me/tracks'
@@ -24,7 +27,19 @@ def get_recently_played():
 
     # Obter as músicas recentemente tocadas
     response = requests.get(url, headers=headers)
-    return response.json()
+    result = response.json()
+
+    items = result['items']
+
+    time.sleep(2)
+
+    response = requests.get(result['next'], headers=headers)
+
+    items += response.json()['items']
+
+    result['items'] = items
+
+    return result
 
 def get_track_info(track_id):
     url = f'{SPOTIFY_BASE_URL}/tracks/{track_id}'

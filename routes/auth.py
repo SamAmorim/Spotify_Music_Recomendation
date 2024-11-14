@@ -7,6 +7,8 @@ auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 def callback():
     code = request.args.get('code')
     state = request.args.get('state')
+    
+    print(code, state, session['state'])
 
     if not code or not state or state != session['state']:
         session['state'] = None
@@ -26,7 +28,6 @@ def callback():
 
 @auth_bp.route('/logout', methods=['GET'])
 def logout():
-    session['state'] = None
-    session['user'] = None
-    session['access_token'] = None
+    session.clear()
+
     return redirect('/')

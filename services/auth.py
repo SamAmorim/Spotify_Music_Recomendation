@@ -1,8 +1,10 @@
-import requests
 import base64
-import time
 import os
+import time
+
+import requests
 from flask import session
+
 from constants.spotify import SPOTIFY_AUTH_URL, SPOTIFY_BASE_URL
 
 def get_user_authorize_url():
@@ -49,6 +51,7 @@ def get_user_callback_token(code):
         return False
     
     session['access_token'] = response.json()['access_token']
+    session['access_token_expiration'] = time.time() + response.json()['expires_in']
     session['user'] = get_user_profile()
 
     return True

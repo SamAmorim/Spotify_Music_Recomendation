@@ -7,6 +7,7 @@ Home
 {% block main %}
 <div class="container-fluid h-100 d-flex flex-column gap-4 align-items-center justify-content-center">
     <div class="col-4 d-flex gap-4 flex-column">
+        <img src="{{ url_for('static', filename='img/char.png') }}" alt="" class="align-self-center" width="250" height="250">
         {% if session['user'] %}
         <div class="d-flex align-items-center justify-content-center gap-3">
             {% if session['user']['images'] %}
@@ -18,14 +19,14 @@ Home
                 Olá, {{ session['user']['display_name'] }}.
             </h1>
         </div>
-        <a href="/report" class="btn btn-lg btn-success" role="button">
+        <a href="/report" class="btn btn-lg btn-primary" role="button">
             Continuar
         </a>
         {% else %}
             <h5 class="text-center">
                 Bem-vindo!
             </h1>
-            <a href="{{ session['login_url'] }}" class="btn btn-lg btn-success" role="button">
+            <a href="{{ session['login_url'] }}" class="btn btn-lg btn-primary" role="button">
                 Fazer login no Spotify
             </a>
         {% endif %}

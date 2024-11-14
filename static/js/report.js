@@ -112,7 +112,39 @@ const audioPlayer = document.getElementById('audio-player');
                     newTrackComponent.querySelector('#track-image').alt = item['track_data'].name;
                     newTrackComponent.querySelector('#track-name').textContent = item['track_data'].name;
                     newTrackComponent.querySelector('#track-artist').textContent = item['track_data'].artists[0].name;
-                    // newTrackComponent.querySelector('#audio-preview').src = item['track_data'].preview_url;
+
+                    if (item['track_data'].preview_url) {
+
+                        newTrackComponent.querySelector('#track-footer').style.display = 'block';
+
+                        const progressBar = newTrackComponent.querySelector('#audio-progress');
+
+                        audioPlayer.addEventListener('timeupdate', () => {
+                            if (audioPlayer.src === item['track_data'].preview_url) {
+                                progressBar.style.width = audioPlayer.currentTime / audioPlayer.duration * 100 + '%';
+                            }
+                            else {
+                                progressBar.style.width = '0%';
+                            }
+                        });
+
+                        newTrackComponent.querySelector('#audio-play').addEventListener('click', () => {
+                            if (audioPlayer.src === item['track_data'].preview_url) {
+                                if (audioPlayer.paused) {
+                                    audioPlayer.play();
+                                    newTrackComponent.querySelector('#audio-play').textContent = '⏸';
+                                } else {
+                                    audioPlayer.pause();
+                                    newTrackComponent.querySelector('#audio-play').textContent = '▶';
+                                }
+                            } else {
+                                audioPlayer.src = item['track_data'].preview_url;
+                                audioPlayer.play();
+                                newTrackComponent.querySelector('#audio-play').textContent = '⏸';
+                            }
+                        });
+                    }
+
                     aiRecommendationContainer.appendChild(newTrackComponent);
                 });
             },
