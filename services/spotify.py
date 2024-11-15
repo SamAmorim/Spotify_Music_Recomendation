@@ -1,5 +1,3 @@
-import time
-
 import requests
 from flask import session
 
@@ -29,16 +27,6 @@ def get_recently_played():
     response = requests.get(url, headers=headers)
     result = response.json()
 
-    items = result['items']
-
-    time.sleep(2)
-
-    response = requests.get(result['next'], headers=headers)
-
-    items += response.json()['items']
-
-    result['items'] = items
-
     return result
 
 def get_track_info(track_id):
@@ -53,6 +41,16 @@ def get_track_info(track_id):
 
 def get_audio_features(track_id):
     url = f'{SPOTIFY_BASE_URL}/audio-features/{track_id}'
+
+    headers = {
+        'Authorization': f'Bearer {session["access_token"]}'
+    }
+
+    response = requests.get(url, headers=headers)
+    return response.json()
+
+def get_artist_info(artist_id):
+    url = f'{SPOTIFY_BASE_URL}/artists/{artist_id}'
 
     headers = {
         'Authorization': f'Bearer {session["access_token"]}'

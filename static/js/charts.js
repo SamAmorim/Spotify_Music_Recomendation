@@ -174,6 +174,19 @@ Chart.register(ChartDataLabels);
 })();
 
 (async function () {
+    mostListenedGenres = await fetch('/report/most-listened-genres')
+        .then(response => response.json())
+        .then(
+            data => {
+                if (data.error) {
+                    console.error(data);
+                    return;
+                }
+
+                return data;
+            }
+        );
+
     new Chart(
         genresChart,
         {
@@ -208,15 +221,26 @@ Chart.register(ChartDataLabels);
                 }
             },
             data: {
-                labels: ['Electronic', 'Metal', 'Country', 'Classical', 'Jazz', 'Blues', 'Reggae', 'Folk', 'Punk', 'Soul'],
-                datasets: [{
-                    label: 'Músicas',
-                    data: [70, 80, 90, 100, 110, 120, 130, 140, 150, 160],
-                    backgroundColor: 'rgba(94, 66, 252, 0.25)',
-                    borderColor: 'rgba(94, 66, 252, 1)',
-                    borderWidth: 1,
-                    pointBackgroundColor: 'rgba(0, 0, 0, 0)',
-                }]
+                labels: mostListenedGenres.map(genre => getStringCapitalizedWords(genre[0])),
+                datasets: [
+                    {
+                        label: 'Músicas',
+                        data: mostListenedGenres.map(genre => genre[1]),
+                        backgroundColor: 'rgba(94, 66, 252, 0.25)',
+                        borderColor: 'rgba(94, 66, 252, 1)',
+                        borderWidth: 1,
+                        pointBackgroundColor: 'rgba(0, 0, 0, 0)',
+                    }
+                ]
+                // labels: ['Electronic', 'Metal', 'Country', 'Classical', 'Jazz', 'Blues', 'Reggae', 'Folk', 'Punk', 'Soul'],
+                // datasets: [{
+                //     label: 'Músicas',
+                //     data: [70, 80, 90, 100, 110, 120, 130, 140, 150, 160],
+                //     backgroundColor: 'rgba(94, 66, 252, 0.25)',
+                //     borderColor: 'rgba(94, 66, 252, 1)',
+                //     borderWidth: 1,
+                //     pointBackgroundColor: 'rgba(0, 0, 0, 0)',
+                // }]
             },
         }
     )

@@ -5,6 +5,8 @@ const aiRecommendationContainer = document.getElementById('ai-recommendation-con
 const aiRecommendationSpinner = document.getElementById('ai-recommendation-spinner');
 const trackComponent = document.getElementById('track-component');
 const audioPlayer = document.getElementById('audio-player');
+const artistsList = document.getElementById('artists-list');
+const artistComponent = document.getElementById('artist-component');
 
 (async function getRecentlyPlayed() {
     recentlyPlayedSpinner.style.display = 'block';
@@ -156,6 +158,39 @@ const audioPlayer = document.getElementById('audio-player');
 
     aiRecommendationSpinner.style.display = 'none';
 })();
+
+fetch('/report/most-listened-artists')
+    .then(response => response.json())
+    .then(
+        data => {
+            if (data.error) {
+                console.error(data);
+                return;
+            }
+
+            data.forEach((artist, index) => {
+                const newArtistComponent = artistComponent.cloneNode(true);
+                newArtistComponent.style.display = 'flex';
+
+                if (index === 0)
+                    newArtistComponent.classList.add('bg-primary');
+
+                newArtistComponent.querySelector('#artist-image').src = artist[1]['image_url'];
+                newArtistComponent.querySelector('#artist-image').alt = artist[0];
+                newArtistComponent.querySelector('#artist-name').textContent = artist[0];
+
+                if (index === 0)
+                    newArtistComponent.querySelector('#artist-name').classList.add('fw-bolder');
+
+                newArtistComponent.querySelector('#artist-plays').textContent = artist[1].count;
+
+                if (index === 0)
+                    newArtistComponent.querySelector('#artist-plays').classList.add('fw-bolder');
+
+                artistsList.appendChild(newArtistComponent);
+            });
+        }
+    )
 
 reportTypeForm.addEventListener('change', e => {
     if (e.target.id === 'recently-played') {
