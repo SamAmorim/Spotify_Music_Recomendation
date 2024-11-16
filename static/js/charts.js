@@ -1,10 +1,38 @@
+const characteristicsSpinner = document.getElementById('characteristics-spinner');
 const characteristicsChart = document.getElementById('characteristics-chart');
+const musicalitySpinner = document.getElementById('musicality-spinner');
 const musicalityChart = document.getElementById('musicality-chart');
+const genresSpinner = document.getElementById('genres-spinner');
 const genresChart = document.getElementById('genres-chart');
 
 Chart.register(ChartDataLabels);
 
+const featureNames = {
+    acousticness: 'Acústica',
+    danceability: 'Dançante',
+    energy: 'Energética',
+    valence: 'Positiva',
+    liveness: 'Ao Vivo',
+    instrumentalness: 'Instrumental',
+    speechiness: 'Falada'
+};
+
 (async function () {
+    characteristicsSpinner.style.display = 'block';
+
+    var mostPresentFeatures = await fetch('/report/most-present-features')
+        .then(response => response.json())
+        .then(
+            data => {
+                if (data.error) {
+                    console.error(data);
+                    return;
+                }
+
+                return data;
+            }
+        );
+
     new Chart(
         characteristicsChart,
         {
@@ -45,24 +73,28 @@ Chart.register(ChartDataLabels);
                 }
             },
             data: {
-                labels: ['Acústica', 'Dançante', 'Energética', 'Positiva', 'Triste'],
+                labels: Object.keys(mostPresentFeatures).map(feature => getStringCapitalizedWords(featureNames[feature])),
                 datasets: [
                     {
                         label: 'Média',
-                        data: [10, 80, 30, 40, 60],
+                        data: Object.values(mostPresentFeatures).map(value => value * 100),
                         backgroundColor: [
                             'rgba(255, 99, 132, 0.2)',
                             'rgba(54, 162, 235, 0.2)',
                             'rgba(255, 206, 86, 0.2)',
                             'rgba(75, 192, 192, 0.2)',
-                            'rgba(153, 102, 255, 0.2)'
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)',
+                            'rgba(181, 255, 8, 0.2)'
                         ],
                         borderColor: [
                             'rgba(255, 99, 132, 1)',
                             'rgba(54, 162, 235, 1)',
                             'rgba(255, 206, 86, 1)',
                             'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)'
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)',
+                            'rgba(181, 255, 8, 1)'
                         ],
                         borderWidth: 1
                     }
@@ -70,9 +102,13 @@ Chart.register(ChartDataLabels);
             }
         }
     );
+
+    characteristicsSpinner.style.display = 'none';
 })();
 
 (async function () {
+    musicalitySpinner.style.display = 'block';
+
     new Chart(
         musicalityChart,
         {
@@ -171,9 +207,13 @@ Chart.register(ChartDataLabels);
             }
         }
     );
+
+    musicalitySpinner.style.display = 'none';
 })();
 
 (async function () {
+    genresSpinner.style.display = 'block';
+
     mostListenedGenres = await fetch('/report/most-listened-genres')
         .then(response => response.json())
         .then(
@@ -226,22 +266,15 @@ Chart.register(ChartDataLabels);
                     {
                         label: 'Músicas',
                         data: mostListenedGenres.map(genre => genre[1]),
-                        backgroundColor: 'rgba(94, 66, 252, 0.25)',
-                        borderColor: 'rgba(94, 66, 252, 1)',
+                        backgroundColor: 'rgba(153, 102, 255, 0.25)',
+                        borderColor: 'rgba(153, 102, 255, 1)',
                         borderWidth: 1,
                         pointBackgroundColor: 'rgba(0, 0, 0, 0)',
                     }
                 ]
-                // labels: ['Electronic', 'Metal', 'Country', 'Classical', 'Jazz', 'Blues', 'Reggae', 'Folk', 'Punk', 'Soul'],
-                // datasets: [{
-                //     label: 'Músicas',
-                //     data: [70, 80, 90, 100, 110, 120, 130, 140, 150, 160],
-                //     backgroundColor: 'rgba(94, 66, 252, 0.25)',
-                //     borderColor: 'rgba(94, 66, 252, 1)',
-                //     borderWidth: 1,
-                //     pointBackgroundColor: 'rgba(0, 0, 0, 0)',
-                // }]
             },
         }
     )
+
+    genresSpinner.style.display = 'none';
 })();

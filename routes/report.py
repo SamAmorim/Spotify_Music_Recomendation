@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, session, redirect
-from services.report import get_most_listened_artists, get_most_listened_genres
+from services.report import get_most_listened_artists, get_most_listened_genres, get_most_present_features
 
 report_bp = Blueprint('report', __name__, url_prefix='/report')
 
@@ -16,3 +16,7 @@ def most_listened_artists():
 @report_bp.route('/most-listened-genres', methods=['GET'])
 def most_listened_genres():
     return get_most_listened_genres()
+
+@report_bp.route('/most-present-features', methods=['GET'])
+def most_present_features():
+    return get_most_present_features()

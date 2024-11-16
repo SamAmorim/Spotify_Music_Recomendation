@@ -105,7 +105,10 @@ Home
                                                     Características mais presentes
                                                 </h6>
                                             </div>
-                                            <div class="col-12" style="height: 300px;">
+                                            <div class="col-12 position-relative" style="height: 300px;">
+                                                <div class="spinner-border position-absolute top-50 start-50" style="display: none; margin: -16px 0 0 -16px;" role="status" id="characteristics-spinner">
+                                                    <span class="visually-hidden">Carregando...</span>
+                                                </div>
                                                 <canvas id="characteristics-chart">
                                             </div>
                                         </div>
@@ -120,6 +123,9 @@ Home
                                                 </h6>
                                             </div>
                                             <div class="col-12 position-relative" style="height: 250px;">
+                                                <div class="spinner-border position-absolute top-50 start-50" style="display: none; margin: -16px 0 0 -16px;" role="status" id="genres-spinner">
+                                                    <span class="visually-hidden">Carregando...</span>
+                                                </div>
                                                 <canvas id="genres-chart">
                                             </div>
                                         </div>
@@ -135,7 +141,10 @@ Home
                                                     Musicalidade ao longo do tempo
                                                 </h6>
                                             </div>
-                                            <div class="col-12" style="height: 300px;">
+                                            <div class="col-12 position-relative" style="height: 300px;">
+                                                <div class="spinner-border position-absolute top-50 start-50" style="display: none; margin: -16px 0 0 -16px;" role="status" id="musicality-spinner">
+                                                    <span class="visually-hidden">Carregando...</span>
+                                                </div>
                                                 <canvas id="musicality-chart">
                                             </div>
                                         </div>
@@ -149,9 +158,12 @@ Home
                                                     Artistas mais ouvidos
                                                 </h6>
                                             </div>
-                                            <div class="col-12">
-                                                <ul class="list-group" id="artists-list">
-
+                                            <div class="col-12 d-flex justify-content-center">
+                                                <div class="spinner-border mt-4" style="display: none;" role="status" id="artists-spinner">
+                                                    <span class="visually-hidden">Carregando...</span>
+                                                </div>
+                                                <ul class="list-group w-100" id="artists-list">
+                                                    
                                                     <!-- Artist component -->
                                                     <li class="list-group-item align-items-center justify-content-between" style="display: none;" id="artist-component">
                                                         <img src="" alt="" class="rounded-circle" id="artist-image" width="24" height="24">
