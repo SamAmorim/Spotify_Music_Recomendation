@@ -7,8 +7,6 @@ auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 def callback():
     code = request.args.get('code')
     state = request.args.get('state')
-    
-    print(code, state, session['state'])
 
     if not code or not state or state != session['state']:
         session['state'] = None

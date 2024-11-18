@@ -59,8 +59,6 @@ def get_top_recommendations(unheard_music_features, heard_music_features, unhear
     unheard_music['similarity'] = similarity_scores
     top_recommendations = unheard_music.sort_values(by='similarity', ascending=False).drop_duplicates(
         subset=['id']).head(top)
-
-    print(top_recommendations)
     
     recommendation_df = top_recommendations
     return recommendation_df

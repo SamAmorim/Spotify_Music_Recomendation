@@ -17,7 +17,7 @@ def get_user_authorize_url():
         'response_type': 'code',
         'redirect_uri': os.environ.get('SPOTIFY_API_REDIRECT_URI'),
         'client_id': os.environ.get('SPOTIFY_API_CLIENT_ID'),
-        'scope': 'user-read-recently-played',
+        'scope': 'user-read-recently-played user-library-read',
         'state': random_state
     }
 
@@ -64,7 +64,5 @@ def get_user_profile():
     }
 
     response = requests.get(url, headers=headers)
-
-    print(response.content)
 
     return response.json()

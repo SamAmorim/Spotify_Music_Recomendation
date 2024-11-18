@@ -1,4 +1,6 @@
-from services.spotify import get_recently_played, get_artist_info, get_audio_features
+from services.spotify import get_recently_played, get_artist_info, get_audio_features, get_user_saved_tracks
+import pandas as pd
+import numpy as np
 
 def get_most_listened_artists():
     recent_tracks = get_recently_played()
@@ -24,8 +26,6 @@ def get_most_listened_genres():
     for track in recent_tracks['items']:
         artist_id = track['track']['artists'][0]['id']
         artist = get_artist_info(artist_id)
-        
-        print(artist)
 
         for genre in artist['genres']:
             if genre in genres:
@@ -61,3 +61,73 @@ def get_most_present_features():
         features[feature] /= len(recent_tracks['items'])
 
     return features
+
+def get_metrics():
+    recent_tracks = get_recently_played()
+
+    genres = []
+
+    for track in recent_tracks['items']:
+        artist_id = track['track']['artists'][0]['id']
+        artist = get_artist_info(artist_id)
+
+        for genre in artist['genres']:
+            if genre not in genres:
+                genres.append(genre)
+
+    print(genres)
+
+    # Normaliza o JSON recebido
+    df = pd.json_normalize(recent_tracks['items'])
+    genres_df = pd.DataFrame(genres, columns=['genres'])
+
+    # Ajusta a coluna 'track.artists' para conter apenas os IDs dos artistas
+    df['track.artists'] = df['track.artists'].apply(lambda x: [artist['name'] for artist in x])
+
+    # Conta os valores únicos para as colunas relevantes
+    unique_values = {
+        'tracks': len(df['track.id'].unique()),       # Número de faixas únicas
+        'artists': len(df['track.artists'].explode().unique()),  # Número de artistas únicos
+        'albums': len(df['track.album.id'].unique()), # Número de álbuns únicos
+        'genres': len(genres_df['genres'].explode().unique())
+    }
+
+    return unique_values
+
+def get_features_in_saved_tracks():
+    saved_tracks = get_user_saved_tracks(100)
+
+    features_template = {
+        'acousticness': 0,
+        'danceability': 0,
+        'energy': 0,
+        'instrumentalness': 0,
+        'liveness': 0,
+        'speechiness': 0,
+        'valence': 0
+    }
+
+    dates = {}
+
+    print(len(saved_tracks['items']))
+
+    for track in saved_tracks['items']:
+        track_id = track['track']['id']
+        added_at = track['added_at']
+        audio_features = get_audio_features(track_id)
+
+        if added_at not in dates:
+            dates[added_at] = features_template.copy()
+
+        for feature in features_template:
+            print(feature, audio_features[feature])
+            dates[added_at][feature] += audio_features[feature]
+
+    for date in dates:
+        print(date)
+        for feature in features_template:
+            print(dates[date][feature])
+            dates[date][feature] /= len(saved_tracks['items'])
+            print(dates[date][feature])
+
+    return dates

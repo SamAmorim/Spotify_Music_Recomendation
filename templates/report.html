@@ -80,20 +80,60 @@ Home
                     </div>
                 </div>
             </div>
-        </div>
+            </div>
         <div class="col-9 h-100">
             <div class="container-fluid d-flex flex-column gap-3 h-100">
-                <div class="row bg-primary text-white rounded-3 p-3">
-                    <div class="col-12 g-0">
-                        <h5>
-                            Perfil músical
-                        </h1>
-                        <span>
-                            Musical profile
-                        </span>
+                <div class="d-flex gap-2 gx-2">
+                    <div class="d-flex flex-row justify-content-between align-items-center w-100 bg-primary p-3 rounded-3">
+                        <div class="d-flex flex-column">
+                            <div class="spinner-border" style="display: none;" role="status" id="metric-tracks-spinner">
+                                <span class="visually-hidden">Carregando...</span>
+                            </div>
+                            <span class="fw-bolder" style="font-size: 2.5rem; line-height: 2.75rem;" id="metric-tracks"></span>
+                            <span class="fw-semibold">
+                                Faixas
+                            </span>
+                        </div>
+                        <img src="{{ url_for('static', filename='img/icons8-aipods-pro-max-100.png') }}" width="42" height="42">
+                    </div>
+                    <div class="d-flex flex-row justify-content-between align-items-center w-100 bg-primary p-3 rounded-3">
+                        <div class="d-flex flex-column">
+                            <div class="spinner-border" style="display: none;" role="status" id="metric-artists-spinner">
+                                <span class="visually-hidden">Carregando...</span>
+                            </div>
+                            <span class="fw-bolder" style="font-size: 2.5rem; line-height: 2.75rem;" id="metric-artists"></span>
+                            <span class="fw-semibold">
+                                Artistas
+                            </span>                    
+                        </div>
+                        <img src="{{ url_for('static', filename='img/icons8-guitarrista-100.png') }}" width="42" height="42">
+                    </div>
+                    <div class="d-flex flex-row justify-content-between align-items-center w-100 bg-primary p-3 rounded-3">
+                        <div class="d-flex flex-column">
+                            <div class="spinner-border" style="display: none;" role="status" id="metric-albums-spinner">
+                                <span class="visually-hidden">Carregando...</span>
+                            </div>
+                            <span class="fw-bolder" style="font-size: 2.5rem; line-height: 2.75rem;" id="metric-albums"></span>
+                            <span class="fw-semibold">
+                                Álbuns
+                            </span>
+                        </div>
+                        <img src="{{ url_for('static', filename='img/icons8-gravar-música-100.png') }}" width="42" height="42">
+                    </div>
+                    <div class="d-flex flex-row justify-content-between align-items-center w-100 bg-primary p-3 rounded-3">
+                        <div class="d-flex flex-column">
+                            <div class="spinner-border" style="display: none;" role="status" id="metric-genres-spinner">
+                                <span class="visually-hidden">Carregando...</span>
+                            </div>
+                            <span class="fw-bolder" style="font-size: 2.5rem; line-height: 2.75rem;" id="metric-genres"></span>
+                            <span class="fw-semibold">
+                                Gêneros
+                            </span>
+                        </div>
+                        <img src="{{ url_for('static', filename='img/icons8-punk-100.png') }}" width="42" height="42">
                     </div>
                 </div>
-                <div class="row bg-body-secondary rounded-3 p-3 h-100 overflow-y-auto">
+                <div class="row bg-body-secondary rounded-3 p-3 h-100 g-0 overflow-y-auto">
                     <div class="col-12 g-0">
                         <div class="container-fluid d-flex flex-column gap-4 g-0 ">
                             <div class="row">
@@ -186,8 +226,9 @@ Home
 {% endblock %}
 
 {% block page_scripts %}
-<script src="{{ url_for('static', filename='js/report.js') }}"></script>
+<script src="{{ url_for('static', filename='js/date-fns.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/chart.umd.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/chartjs-adapter-date-fns.js') }}"></script>
 <script src="{{ url_for('static', filename='js/chartjs-plugin-datalabels.js') }}"></script>
-<script defer src="{{ url_for('static', filename='js/charts.js') }}"></script>
+<script async defer src="{{ url_for('static', filename='js/report.js') }}"></script>
 {% endblock page_scripts %}
