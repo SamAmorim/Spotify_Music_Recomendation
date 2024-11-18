@@ -50,12 +50,12 @@ def get_most_present_features():
         'valence': 0
     }
 
-    for track in recent_tracks['items']:
-        track_id = track['track']['id']
-        audio_features = get_audio_features(track_id)
+    track_ids = list(map(lambda x: x['track']['id'], recent_tracks['items']))
+    tracks_features = get_audio_features(track_ids)
 
+    for track_features in tracks_features['audio_features']:
         for feature in features:
-            features[feature] += audio_features[feature]
+            features[feature] += track_features[feature]
 
     for feature in features:
         features[feature] /= len(recent_tracks['items'])
@@ -74,8 +74,6 @@ def get_metrics():
         for genre in artist['genres']:
             if genre not in genres:
                 genres.append(genre)
-
-    print(genres)
 
     # Normaliza o JSON recebido
     df = pd.json_normalize(recent_tracks['items'])

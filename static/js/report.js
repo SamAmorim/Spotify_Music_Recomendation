@@ -21,8 +21,8 @@ const metricsGenresSpinner = document.getElementById('metric-genres-spinner');
 
 const characteristicsSpinner = document.getElementById('characteristics-spinner');
 const characteristicsChart = document.getElementById('characteristics-chart');
-const musicalitySpinner = document.getElementById('musicality-spinner');
-const musicalityChart = document.getElementById('musicality-chart');
+const timeSpinner = document.getElementById('time-spinner');
+const timeChart = document.getElementById('time-chart');
 const genresSpinner = document.getElementById('genres-spinner');
 const genresChart = document.getElementById('genres-chart');
 
@@ -50,7 +50,7 @@ async function getReports() {
     metricsGenresSpinner.style.display = 'block';
 
     characteristicsSpinner.style.display = 'block';
-    musicalitySpinner.style.display = 'block';
+    timeSpinner.style.display = 'block';
     genresSpinner.style.display = 'block';
 
     async function getRecentlyPlayed() {
@@ -299,57 +299,42 @@ async function getReports() {
             genresSpinner.style.display = 'none';
         }
     
-        async function createMusicalityChart() {
-            var musicalityByDates = await fetch('/report/features-by-dates')
-                .then(response => response.json())
-                .then(
-                    data => {
-                        if (data.error) {
-                            console.error(data);
-                            return;
-                        }
-    
-                        return data;
-                    }
-                );
-    
+        async function createTimeChart() {
             new Chart(
-                musicalityChart,
+                genresChart,
                 {
-                    type: 'line',
+                    type: 'polarArea',
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
                         scales: {
-                            x: {
-                                type: 'time',
+                            r: {
                                 ticks: {
-                                    color: "#fff"
-                                },
-                                grid: {
                                     display: false
+                                },
+                                pointLabels: {
+                                    display: true,
+                                    color: "rgba(255, 255, 255, 0.5)",
+                                    font: {
+                                        size: 8
+                                    }
+                                },
+                                angleLines: {
+                                    display: true,
+                                    color: "rgba(255, 255, 255, 0.25)"
                                 }
                             },
-                            y: {
-                                ticks: {
-                                    color: "#fff",
-                                    callback: value => value + "%"
-                                },
-                                grid: {
-                                    color: "rgba(255, 255, 255, 0.25)"
+                        },
+                        tooltips: {
+                            callbacks: {
+                                label: (tooltipItem, data) => {
+                                    return data.labels[tooltipItem.index] + ': ' + data.datasets[0].data[tooltipItem.index] + ' músicas';
                                 }
                             }
                         },
                         plugins: {
                             legend: {
-                                display: true,
-                                position: 'bottom',
-                                labels: {
-                                    color: '#fff',
-                                    font: {
-                                        size: 12
-                                    }
-                                }
+                                display: false
                             },
                             title: {
                                 display: false
@@ -360,38 +345,33 @@ async function getReports() {
                         }
                     },
                     data: {
-                        labels: Object.keys(musicalityByDates).map(date => musicalityByDates[date]),
-                        datasets: Object.keys(featureNames).map(feature => (
+                        labels: ["24", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"],
+                        datasets: [
                             {
-                                label: featureNames[feature],
-                                data: Object.keys(musicalityByDates).map(date => (
-                                    {
-                                        x: date,
-                                        y: musicalityByDates[date]
-                                    }
-                                ))
+                                data: [20, 20, 15, 5, 0, 0, 0, 0, 0, 0, 5, 10, 0, 0, 0, 0, 0, 5, 20, 26, 25, 28, 23, 24],
+                                backgroundColor: 'rgba(153, 102, 255, 0.25)',
+                                borderColor: 'rgba(153, 102, 255, 1)',
+                                borderWidth: 1
                             }
-                        )),
-                        fill: false,
-                        borderWidth: 1
-                    }
-                }
-            );
+                        ],
+                    },
+                },
+            )
     
-            musicalitySpinner.style.display = 'none';
+            genresSpinner.style.display = 'none';
         }
-    
-        await createGenresChart();
-
+        
+        await createTimeChart();
+        // await createGenresChart();
+        
         await new Promise(resolve => setTimeout(resolve, 5000));
-
-        await createCharacteristicsChart();
-        // await createMusicalityChart();
+        
+        // await createCharacteristicsChart();
     };
     
-    await getRecentlyPlayed();
-    await getMetrics();
-    await getMostListenedArtists();
+    // await getRecentlyPlayed();
+    // await getMetrics();
+    // await getMostListenedArtists();
 
     await createCharts();
 };

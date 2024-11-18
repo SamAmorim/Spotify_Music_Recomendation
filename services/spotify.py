@@ -59,6 +59,16 @@ def get_audio_features(track_id):
     response = requests.get(url, headers=headers)
     return response.json()
 
+def get_audio_features(track_ids=[]):
+    url = f'{SPOTIFY_BASE_URL}/audio-features'
+
+    headers = {
+        'Authorization': f'Bearer {session["access_token"]}'
+    }
+
+    response = requests.get(url, headers=headers, params={"ids": ','.join(track_ids)})
+    return response.json()
+
 def get_artist_info(artist_id):
     url = f'{SPOTIFY_BASE_URL}/artists/{artist_id}'
 
