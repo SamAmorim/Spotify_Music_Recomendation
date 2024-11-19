@@ -43,7 +43,7 @@ var aiRecommendationFetched = false;
 async function getReports() {
     recentlyPlayedSpinner.style.display = 'block';
     artistsSpinner.style.display = 'block';
-    
+
     metricsAlbumsSpinner.style.display = 'block';
     metricsTracksSpinner.style.display = 'block';
     metricsArtistsSpinner.style.display = 'block';
@@ -83,8 +83,13 @@ async function getReports() {
         recentlyPlayedSpinner.style.display = 'none';
     };
 
-    async function getMostListenedArtists() {
-        fetch('/report/most-listened-artists')
+    var mostListenedArtists = [];
+    var mostListenedGenres = [];
+    var mostPresentFeatures = [];
+    var metrics = {};
+
+    async function getData() {
+        await fetch('/report/data')
             .then(response => response.json())
             .then(
                 data => {
@@ -93,51 +98,47 @@ async function getReports() {
                         return;
                     }
 
-                    data.forEach((artist, index) => {
-                        const newArtistComponent = artistComponent.cloneNode(true);
-                        newArtistComponent.style.display = 'flex';
-
-                        if (index === 0)
-                            newArtistComponent.classList.add('bg-primary');
-
-                        newArtistComponent.querySelector('#artist-image').src = artist[1]['image_url'];
-                        newArtistComponent.querySelector('#artist-image').alt = artist[0];
-                        newArtistComponent.querySelector('#artist-name').textContent = artist[0];
-
-                        if (index === 0)
-                            newArtistComponent.querySelector('#artist-name').classList.add('fw-bolder');
-
-                        newArtistComponent.querySelector('#artist-plays').textContent = artist[1].count;
-
-                        if (index === 0)
-                            newArtistComponent.querySelector('#artist-plays').classList.add('fw-bolder');
-
-                        artistsList.appendChild(newArtistComponent);
-                    });
+                    mostListenedArtists = data.most_listened_artists;
+                    mostListenedGenres = data.most_listened_genres;
+                    mostPresentFeatures = data.most_present_features;
+                    metrics = data.metrics;
                 }
             )
+    }
+
+    getData();
+
+    async function chartMostListenedArtists() {
+        mostListenedArtists.forEach((artist, index) => {
+            const newArtistComponent = artistComponent.cloneNode(true);
+            newArtistComponent.style.display = 'flex';
+
+            if (index === 0)
+                newArtistComponent.classList.add('bg-primary');
+
+            newArtistComponent.querySelector('#artist-image').src = artist[1]['image_url'];
+            newArtistComponent.querySelector('#artist-image').alt = artist[0];
+            newArtistComponent.querySelector('#artist-name').textContent = artist[0];
+
+            if (index === 0)
+                newArtistComponent.querySelector('#artist-name').classList.add('fw-bolder');
+
+            newArtistComponent.querySelector('#artist-plays').textContent = artist[1].count;
+
+            if (index === 0)
+                newArtistComponent.querySelector('#artist-plays').classList.add('fw-bolder');
+
+            artistsList.appendChild(newArtistComponent);
+        });
 
         artistsSpinner.style.display = 'none';
     };
 
-    async function getMetrics() {
-        await fetch('/report/metrics')
-            .then(response => response.json())
-            .then(
-                data => {
-                    if (data.error) {
-                        console.error(data);
-                        return;
-                    }
-
-                    console.log(data);
-
-                    metricsAlbums.textContent = data.albums;
-                    metricsArtists.textContent = data.artists;
-                    metricsGenres.textContent = data.genres;
-                    metricsTracks.textContent = data.tracks;
-                }
-            )
+    async function chartMetrics() {
+        metricsAlbums.textContent = metrics.albums;
+        metricsArtists.textContent = metrics.artists;
+        metricsGenres.textContent = metrics.genres;
+        metricsTracks.textContent = metrics.tracks;
 
         metricsAlbumsSpinner.style.display = 'none';
         metricsTracksSpinner.style.display = 'none';
@@ -147,19 +148,6 @@ async function getReports() {
 
     async function createCharts() {
         async function createCharacteristicsChart() {
-            var mostPresentFeatures = await fetch('/report/most-present-features')
-                .then(response => response.json())
-                .then(
-                    data => {
-                        if (data.error) {
-                            console.error(data);
-                            return;
-                        }
-    
-                        return data;
-                    }
-                );
-    
             new Chart(
                 characteristicsChart,
                 {
@@ -229,24 +217,11 @@ async function getReports() {
                     }
                 }
             );
-    
+
             characteristicsSpinner.style.display = 'none';
         }
-    
+
         async function createGenresChart() {
-            mostListenedGenres = await fetch('/report/most-listened-genres')
-                .then(response => response.json())
-                .then(
-                    data => {
-                        if (data.error) {
-                            console.error(data);
-                            return;
-                        }
-    
-                        return data;
-                    }
-                );
-    
             new Chart(
                 genresChart,
                 {
@@ -295,13 +270,13 @@ async function getReports() {
                     },
                 }
             )
-    
+
             genresSpinner.style.display = 'none';
         }
-    
+
         async function createTimeChart() {
             new Chart(
-                genresChart,
+                timeChart,
                 {
                     type: 'polarArea',
                     options: {
@@ -357,21 +332,18 @@ async function getReports() {
                     },
                 },
             )
-    
-            genresSpinner.style.display = 'none';
+
+            timeSpinner.style.display = 'none';
         }
-        
+
         await createTimeChart();
-        // await createGenresChart();
-        
-        await new Promise(resolve => setTimeout(resolve, 5000));
-        
-        // await createCharacteristicsChart();
+        await createGenresChart();
+        await createCharacteristicsChart();
     };
-    
-    // await getRecentlyPlayed();
-    // await getMetrics();
-    // await getMostListenedArtists();
+
+    await getRecentlyPlayed();
+    await chartMetrics();
+    await chartMostListenedArtists();
 
     await createCharts();
 };

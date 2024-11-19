@@ -2,9 +2,7 @@ from services.spotify import get_recently_played, get_artist_info, get_audio_fea
 import pandas as pd
 import numpy as np
 
-def get_most_listened_artists():
-    recent_tracks = get_recently_played()
-
+def get_most_listened_artists(recent_tracks):
     artists = {}
 
     for track in recent_tracks['items']:
@@ -18,28 +16,22 @@ def get_most_listened_artists():
 
     return sorted(artists.items(), key=lambda x: x[1]['count'], reverse=True)[:10]
 
-def get_most_listened_genres():
-    recent_tracks = get_recently_played()
-
+def get_most_listened_genres(recent_tracks):
     genres = {}
 
     for track in recent_tracks['items']:
-        artist_id = track['track']['artists'][0]['id']
-        artist = get_artist_info(artist_id)
-
-        for genre in artist['genres']:
-            if genre in genres:
-                genres[genre] += 1
-            else:
-                genres[genre] = 1
+        for artist in track['track']['artists']:
+            for genre in artist['info']['genres']:
+                if genre in genres:
+                    genres[genre] += 1
+                else:
+                    genres[genre] = 1
 
     # Retornar os 10 gêneros mais ouvidos, ordenados alfabeticamente
     by_quantity = sorted(genres.items(), key=lambda x: x[1], reverse=True)[:10]
     return sorted(by_quantity, key=lambda x: x[0])
 
-def get_most_present_features():
-    recent_tracks = get_recently_played()
-
+def get_most_present_features(recent_tracks):
     features = {
         'acousticness': 0,
         'danceability': 0,
@@ -62,18 +54,14 @@ def get_most_present_features():
 
     return features
 
-def get_metrics():
-    recent_tracks = get_recently_played()
-
+def get_metrics(recent_tracks):
     genres = []
 
     for track in recent_tracks['items']:
-        artist_id = track['track']['artists'][0]['id']
-        artist = get_artist_info(artist_id)
-
-        for genre in artist['genres']:
-            if genre not in genres:
-                genres.append(genre)
+        for artist in track['track']['artists']:
+            for genre in artist['info']['genres']:
+                if genre not in genres:
+                    genres.append(genre)
 
     # Normaliza o JSON recebido
     df = pd.json_normalize(recent_tracks['items'])
