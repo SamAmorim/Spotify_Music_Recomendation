@@ -13,9 +13,9 @@ Home
                     <div class="col-12">
                         <div class="d-flex align-items-center gap-3">
                             {% if session['user']['images'] %}
-                                <img src="{{ session['user']['images'][0]['url'] }}" alt="{{ session['user']['display_name'] }}" class="rounded-circle" width="32" height="32">
+                                <img src="{{ session['user']['images'][0]['url'] }}" alt="{{ session['user']['display_name'] }}" class="rounded-circle" width="42" height="42">
                             {% else %}
-                                <img src="{{ url_for('static', filename='img/profile.png') }}" alt="Spotify" class="rounded-circle" width="32" height="32">
+                                <img src="{{ url_for('static', filename='img/profile.png') }}" alt="Spotify" class="rounded-circle" width="42" height="42">
                             {% endif %}
                             <div class="d-flex flex-column">
                                 <h6 class="text-center">
@@ -29,11 +29,11 @@ Home
                     </div>
                 </div>
                 <div class="row">
-                    <form class="col-12 d-flex justify-content-between gap-2" id="report-type-form">
+                    <form class="col-12 d-flex flex-column justify-content-between gap-2" id="report-type-form">
                         <input type="radio" class="btn-check" name="report-type" id="recently-played" autocomplete="off" checked>
-                        <label class="btn btn-sm btn-outline-primary fw-semibold" style="font-size: 0.8rem;" for="recently-played">Ouvidas recentemente</label>
+                        <label class="btn btn-outline-primary fw-semibold" style="font-size: 0.8rem;" for="recently-played">Ouvidas recentemente</label>
                         <input type="radio" class="btn-check" name="report-type" id="ai-recommendation" autocomplete="off">
-                        <label class="btn btn-sm btn-outline-primary fw-semibold" style="font-size: 0.8rem;" for="ai-recommendation">Recomendação da IA</label>
+                        <label class="btn btn-outline-primary fw-semibold" style="font-size: 0.8rem;" for="ai-recommendation">Recomendação da IA</label>
                     </form>
                 </div>
                 <div class="row h-100 overflow-y-auto">
@@ -86,7 +86,7 @@ Home
                 <div class="d-flex gap-2 gx-2">
                     <div class="d-flex flex-row justify-content-between align-items-center w-100 bg-primary p-3 rounded-3">
                         <div class="d-flex flex-column">
-                            <div class="spinner-border" style="display: none;" role="status" id="metric-tracks-spinner">
+                            <div class="spinner-border my-1" style="display: none;" role="status" id="metric-tracks-spinner">
                                 <span class="visually-hidden">Carregando...</span>
                             </div>
                             <span class="fw-bolder" style="font-size: 2.5rem; line-height: 2.75rem;" id="metric-tracks"></span>
@@ -98,7 +98,7 @@ Home
                     </div>
                     <div class="d-flex flex-row justify-content-between align-items-center w-100 bg-primary p-3 rounded-3">
                         <div class="d-flex flex-column">
-                            <div class="spinner-border" style="display: none;" role="status" id="metric-artists-spinner">
+                            <div class="spinner-border my-1" style="display: none;" role="status" id="metric-artists-spinner">
                                 <span class="visually-hidden">Carregando...</span>
                             </div>
                             <span class="fw-bolder" style="font-size: 2.5rem; line-height: 2.75rem;" id="metric-artists"></span>
@@ -110,7 +110,7 @@ Home
                     </div>
                     <div class="d-flex flex-row justify-content-between align-items-center w-100 bg-primary p-3 rounded-3">
                         <div class="d-flex flex-column">
-                            <div class="spinner-border" style="display: none;" role="status" id="metric-albums-spinner">
+                            <div class="spinner-border my-1" style="display: none;" role="status" id="metric-albums-spinner">
                                 <span class="visually-hidden">Carregando...</span>
                             </div>
                             <span class="fw-bolder" style="font-size: 2.5rem; line-height: 2.75rem;" id="metric-albums"></span>
@@ -122,7 +122,7 @@ Home
                     </div>
                     <div class="d-flex flex-row justify-content-between align-items-center w-100 bg-primary p-3 rounded-3">
                         <div class="d-flex flex-column">
-                            <div class="spinner-border" style="display: none;" role="status" id="metric-genres-spinner">
+                            <div class="spinner-border my-1" style="display: none;" role="status" id="metric-genres-spinner">
                                 <span class="visually-hidden">Carregando...</span>
                             </div>
                             <span class="fw-bolder" style="font-size: 2.5rem; line-height: 2.75rem;" id="metric-genres"></span>
@@ -178,14 +178,14 @@ Home
                                         <div class="row gap-2">
                                             <div class="col-12">
                                                 <h6>
-                                                    Horários mais ouvidos
+                                                    Palavras mais frequentes
                                                 </h6>
                                             </div>
-                                            <div class="col-12 position-relative" style="height: 300px;">
-                                                <div class="spinner-border position-absolute top-50 start-50" style="display: none; margin: -16px 0 0 -16px;" role="status" id="time-spinner">
+                                            <div class="col-12 position-relative" style="height: 420px;">
+                                                <div class="spinner-border position-absolute top-50 start-50" style="display: none; margin: -16px 0 0 -16px;" role="status" id="words-spinner">
                                                     <span class="visually-hidden">Carregando...</span>
                                                 </div>
-                                                <canvas id="time-chart">
+                                                <canvas id="words-chart">
                                             </div>
                                         </div>
                                     </div>
@@ -198,9 +198,11 @@ Home
                                                     Artistas mais ouvidos
                                                 </h6>
                                             </div>
-                                            <div class="col-12 d-flex justify-content-center">
-                                                <div class="spinner-border mt-4" style="display: none;" role="status" id="artists-spinner">
-                                                    <span class="visually-hidden">Carregando...</span>
+                                            <div class="col-12">
+                                                <div class="d-flex justify-content-center align-items-center">
+                                                    <div class="spinner-border" style="display: none;" role="status" id="artists-spinner">
+                                                        <span class="visually-hidden">Carregando...</span>
+                                                    </div>
                                                 </div>
                                                 <ul class="list-group w-100" id="artists-list">
                                                     
@@ -211,6 +213,42 @@ Home
                                                         <span id="artist-plays"></span>
                                                     </li>
                                                 </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="container-fluid g-0">
+                                        <div class="row gap-2">
+                                            <div class="col-12">
+                                                <h6>
+                                                    Horários mais ouvidos
+                                                </h6>
+                                            </div>
+                                            <div class="col-12 position-relative" style="height: 300px;">
+                                                <div class="spinner-border position-absolute top-50 start-50" style="display: none; margin: -16px 0 0 -16px;" role="status" id="time-spinner">
+                                                    <span class="visually-hidden">Carregando...</span>
+                                                </div>
+                                                <canvas id="time-chart">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-8">
+                                    <div class="container-fluid g-0">
+                                        <div class="row gap-2">
+                                            <div class="col-12">
+                                                <h6>
+                                                    Gênero por horário
+                                                </h6>
+                                            </div>
+                                            <div class="col-12 position-relative" style="height: 300px;">
+                                                <div class="spinner-border position-absolute top-50 start-50" style="display: none; margin: -16px 0 0 -16px;" role="status" id="genres-time-spinner">
+                                                    <span class="visually-hidden">Carregando...</span>
+                                                </div>
+                                                <canvas id="genres-time-chart">
                                             </div>
                                         </div>
                                     </div>

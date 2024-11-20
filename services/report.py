@@ -31,6 +31,51 @@ def get_most_listened_genres(recent_tracks):
     by_quantity = sorted(genres.items(), key=lambda x: x[1], reverse=True)[:10]
     return sorted(by_quantity, key=lambda x: x[0])
 
+def get_most_listened_genres_by_hour_of_day(recent_tracks):
+    genres = {}
+
+    for track in recent_tracks['items']:
+        played_at = track['played_at']
+        hour = int(played_at.split('T')[1][:2])-3
+
+        for artist in track['track']['artists']:
+            for genre in artist['info']['genres']:
+                if genre not in genres:
+                    genres[genre] = [0]*24
+
+                genres[genre][hour] += 1
+
+    most_listened_genres = sorted(genres.items(), key=lambda x: sum(x[1]), reverse=True)[:6]
+    return {genre: hours for genre, hours in most_listened_genres}
+
+def get_most_present_words_in_title(recent_tracks):
+    words = {}
+
+    exclude = ['-', 'remaster', 'the', 'a', 'an', 'of', 'in', 'on', 'at', 'for', 'with', 'and', 'or', 'but', 'nor', 'so', 'yet', 'to', 'from', 'by', 'as',
+               'o', 'um', 'uma', 'de', 'em', 'no', 'na', 'para', 'com', 'e', 'ou', 'mas', 'nem', 'por', 'como']
+
+    for track in recent_tracks['items']:
+        title = track['track']['name']
+        for word in title.split(' '):
+            word = word.lower()
+            if word not in exclude:
+                if word in words:
+                    words[word] += 1
+                else:
+                    words[word] = 1
+
+    return sorted(words.items(), key=lambda x: x[1], reverse=True)[:10]
+
+def get_most_listened_hour_of_day(recent_tracks):
+    hours = np.zeros(24)
+
+    for track in recent_tracks['items']:
+        played_at = track['played_at']
+        hour = int(played_at.split('T')[1][:2])-3
+        hours[hour] += 1
+
+    return hours.tolist()
+
 def get_most_present_features(recent_tracks):
     features = {
         'acousticness': 0,
