@@ -1,4 +1,4 @@
-from services.spotify import get_recently_played, get_artist_info, get_audio_features, get_user_saved_tracks
+from services.spotify import get_recently_played, get_artist_info, get_audio_features_multiple, get_user_saved_tracks
 import pandas as pd
 import numpy as np
 
@@ -51,7 +51,7 @@ def get_most_listened_genres_by_hour_of_day(recent_tracks):
 def get_most_present_words_in_title(recent_tracks):
     words = {}
 
-    exclude = ['-', 'remaster', 'the', 'a', 'an', 'of', 'in', 'on', 'at', 'for', 'with', 'and', 'or', 'but', 'nor', 'so', 'yet', 'to', 'from', 'by', 'as',
+    exclude = ['remastered', '-', 'remaster', 'the', 'a', 'an', 'of', 'in', 'on', 'at', 'for', 'with', 'and', 'or', 'but', 'nor', 'so', 'yet', 'to', 'from', 'by', 'as',
                'o', 'um', 'uma', 'de', 'em', 'no', 'na', 'para', 'com', 'e', 'ou', 'mas', 'nem', 'por', 'como']
 
     for track in recent_tracks['items']:
@@ -88,7 +88,7 @@ def get_most_present_features(recent_tracks):
     }
 
     track_ids = list(map(lambda x: x['track']['id'], recent_tracks['items']))
-    tracks_features = get_audio_features(track_ids)
+    tracks_features = get_audio_features_multiple(track_ids)
 
     for track_features in tracks_features['audio_features']:
         for feature in features:
@@ -145,7 +145,7 @@ def get_features_in_saved_tracks():
     for track in saved_tracks['items']:
         track_id = track['track']['id']
         added_at = track['added_at']
-        audio_features = get_audio_features(track_id)
+        audio_features = get_audio_features_multiple(track_id)
 
         if added_at not in dates:
             dates[added_at] = features_template.copy()

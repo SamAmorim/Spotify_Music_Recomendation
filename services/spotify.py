@@ -59,7 +59,7 @@ def get_audio_features(track_id):
     response = requests.get(url, headers=headers)
     return response.json()
 
-def get_audio_features(track_ids=[]):
+def get_audio_features_multiple(track_ids=[]):
     url = f'{SPOTIFY_BASE_URL}/audio-features'
 
     headers = {
