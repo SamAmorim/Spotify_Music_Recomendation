@@ -5,7 +5,7 @@ from sklearn.cluster import KMeans
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
-from services.spotify import get_audio_features, get_recently_played, get_track_info
+from services.spotify import get_audio_features_multiple, get_recently_played, get_track_info
 
 # Caminhos dos arquivos de dados
 genre_df_path = "music_data/data_by_genres.csv"
@@ -67,13 +67,15 @@ def get_top_recommendations(unheard_music_features, heard_music_features, unhear
 def get_recently_played_with_audio_features():
     recently_played = get_recently_played()
     
+    track_ids = list(map(lambda x: x['track']['id'], recently_played['items']))
+    audio_features = get_audio_features_multiple(track_ids)['audio_features']
+
     for item in recently_played['items']:
         track_data = get_track_info(item['track']['id'])
-        audio_features = get_audio_features(item['track']['id'])
-
+        
         if track_data and audio_features:
             item['track']['track_data'] = track_data
-            item['track']['audio_features'] = audio_features
+            item['track']['audio_features'] = next((x for x in audio_features if x['id'] == item['track']['id']), None)
 
     return recently_played
 
@@ -82,9 +84,11 @@ def get_music_recommendation():
     # Obter músicas recentemente ouvidas pelo usuário e transformar em DataFrame
     recently_played_df = transform_recently_played_to_df(get_recently_played_with_audio_features())
 
+    print(recently_played_df.head())
+
     music_df = pd.read_csv("music_data/music_data.csv")
 
-    # Alinhar tipos de dados para garantir consistência ao adicionar novas músicas
+    # # Alinhar tipos de dados para garantir consistência ao adicionar novas músicas
     for col in music_df.columns:
         if col in recently_played_df.columns:
             recently_played_df[col] = recently_played_df[col].astype(music_df[col].dtype)

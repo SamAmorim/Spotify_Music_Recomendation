@@ -1,10 +1,8 @@
-from services.spotify import get_recently_played, get_artist_info, get_audio_features, get_user_saved_tracks
+from services.spotify import get_recently_played, get_artist_info, get_audio_features_multiple, get_user_saved_tracks
 import pandas as pd
 import numpy as np
 
-def get_most_listened_artists():
-    recent_tracks = get_recently_played()
-
+def get_most_listened_artists(recent_tracks):
     artists = {}
 
     for track in recent_tracks['items']:
@@ -18,28 +16,67 @@ def get_most_listened_artists():
 
     return sorted(artists.items(), key=lambda x: x[1]['count'], reverse=True)[:10]
 
-def get_most_listened_genres():
-    recent_tracks = get_recently_played()
-
+def get_most_listened_genres(recent_tracks):
     genres = {}
 
     for track in recent_tracks['items']:
-        artist_id = track['track']['artists'][0]['id']
-        artist = get_artist_info(artist_id)
-
-        for genre in artist['genres']:
-            if genre in genres:
-                genres[genre] += 1
-            else:
-                genres[genre] = 1
+        for artist in track['track']['artists']:
+            for genre in artist['info']['genres']:
+                if genre in genres:
+                    genres[genre] += 1
+                else:
+                    genres[genre] = 1
 
     # Retornar os 10 gêneros mais ouvidos, ordenados alfabeticamente
     by_quantity = sorted(genres.items(), key=lambda x: x[1], reverse=True)[:10]
     return sorted(by_quantity, key=lambda x: x[0])
 
-def get_most_present_features():
-    recent_tracks = get_recently_played()
+def get_most_listened_genres_by_hour_of_day(recent_tracks):
+    genres = {}
 
+    for track in recent_tracks['items']:
+        played_at = track['played_at']
+        hour = int(played_at.split('T')[1][:2])-3
+
+        for artist in track['track']['artists']:
+            for genre in artist['info']['genres']:
+                if genre not in genres:
+                    genres[genre] = [0]*24
+
+                genres[genre][hour] += 1
+
+    most_listened_genres = sorted(genres.items(), key=lambda x: sum(x[1]), reverse=True)[:6]
+    return {genre: hours for genre, hours in most_listened_genres}
+
+def get_most_present_words_in_title(recent_tracks):
+    words = {}
+
+    exclude = ['remastered', '-', 'remaster', 'the', 'a', 'an', 'of', 'in', 'on', 'at', 'for', 'with', 'and', 'or', 'but', 'nor', 'so', 'yet', 'to', 'from', 'by', 'as',
+               'o', 'um', 'uma', 'de', 'em', 'no', 'na', 'para', 'com', 'e', 'ou', 'mas', 'nem', 'por', 'como']
+
+    for track in recent_tracks['items']:
+        title = track['track']['name']
+        for word in title.split(' '):
+            word = word.lower()
+            if word not in exclude:
+                if word in words:
+                    words[word] += 1
+                else:
+                    words[word] = 1
+
+    return sorted(words.items(), key=lambda x: x[1], reverse=True)[:10]
+
+def get_most_listened_hour_of_day(recent_tracks):
+    hours = np.zeros(24)
+
+    for track in recent_tracks['items']:
+        played_at = track['played_at']
+        hour = int(played_at.split('T')[1][:2])-3
+        hours[hour] += 1
+
+    return hours.tolist()
+
+def get_most_present_features(recent_tracks):
     features = {
         'acousticness': 0,
         'danceability': 0,
@@ -50,32 +87,26 @@ def get_most_present_features():
         'valence': 0
     }
 
-    for track in recent_tracks['items']:
-        track_id = track['track']['id']
-        audio_features = get_audio_features(track_id)
+    track_ids = list(map(lambda x: x['track']['id'], recent_tracks['items']))
+    tracks_features = get_audio_features_multiple(track_ids)
 
+    for track_features in tracks_features['audio_features']:
         for feature in features:
-            features[feature] += audio_features[feature]
+            features[feature] += track_features[feature]
 
     for feature in features:
         features[feature] /= len(recent_tracks['items'])
 
     return features
 
-def get_metrics():
-    recent_tracks = get_recently_played()
-
+def get_metrics(recent_tracks):
     genres = []
 
     for track in recent_tracks['items']:
-        artist_id = track['track']['artists'][0]['id']
-        artist = get_artist_info(artist_id)
-
-        for genre in artist['genres']:
-            if genre not in genres:
-                genres.append(genre)
-
-    print(genres)
+        for artist in track['track']['artists']:
+            for genre in artist['info']['genres']:
+                if genre not in genres:
+                    genres.append(genre)
 
     # Normaliza o JSON recebido
     df = pd.json_normalize(recent_tracks['items'])
@@ -114,7 +145,7 @@ def get_features_in_saved_tracks():
     for track in saved_tracks['items']:
         track_id = track['track']['id']
         added_at = track['added_at']
-        audio_features = get_audio_features(track_id)
+        audio_features = get_audio_features_multiple(track_id)
 
         if added_at not in dates:
             dates[added_at] = features_template.copy()
